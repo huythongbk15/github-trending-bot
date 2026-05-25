@@ -1,0 +1,33 @@
+name: Run GitHub Trending Bot Daily
+
+# 1. Định nghĩa THỜI GIAN kích hoạt Bot
+on:
+  schedule:
+    # Chạy vào lúc 01:00 AM giờ UTC hằng ngày (tương đương 08:00 AM sáng giờ Việt Nam)
+    - cron: '0 1 * * *'
+  workflow_dispatch: # Dòng này cho phép bạn bấm nút chạy thử bằng tay bất kỳ lúc nào
+
+# 2. Định nghĩa CÁC BƯỚC máy tính ảo của GitHub sẽ thực hiện
+jobs:
+  run-bot-job:
+    runs-on: ubuntu-latest # Sử dụng hệ điều hành Ubuntu ảo
+
+    steps:
+      - name: 1. Tải code từ Repository về máy ảo
+        uses: actions/checkout@v4
+
+      - name: 2. Cài đặt môi trường Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10' # Chọn phiên bản Python
+
+      - name: 3. Cài đặt các thư viện cần thiết
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests beautifulsoup4
+
+      - name: 4. Chạy file script Python
+        env:
+          # Bảo mật: Lấy URL Webhook từ cấu hình ẩn (Secrets) của GitHub
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: python github_discord_bot.py
