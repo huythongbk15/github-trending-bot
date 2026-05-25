@@ -68,6 +68,35 @@ def send_discord_webhook(content):
         print(f"Lỗi gửi Discord: {response.status_code}, {response.text}")
         return False
 
+def send_discord_embed(trending_list, language):
+    lang_title = language.upper() if language else "ALL LANGUAGES"
+    
+    # Tạo danh sách các thẻ Embed (Discord cho phép tối đa 10 embed trong 1 tin nhắn)
+    embeds = []
+    
+    for idx, repo in enumerate(trending_list, 1):
+        embeds.append({
+            "title": f"{idx}. {repo['name']}",
+            "url": repo['link'],
+            "description": repo['desc'],
+            "color": 5814783, # Mã màu dạng Decimal (ở đây là màu Blurple của Discord)
+            "fields": [
+                {
+                    "name": "🔥 Tăng trưởng trong ngày",
+                    "value": f"`{repo['stars_today']}`",
+                    "inline": True
+                }
+            ]
+        })
+        
+    payload = {
+        "content": f"## 🚀 GITHUB TRENDING BẢN TIN [{lang_title}] 🚀",
+        "embeds": embeds,
+        "username": "GitHub Trending Expert"
+    }
+    
+    requests.post(DISCORD_WEBHOOK_URL, json=payload)
+
 def main():
     print("Đang quét GitHub Trending...")
     trending_list = get_github_trending()
