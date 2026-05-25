@@ -119,7 +119,7 @@ def main():
         message += "━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
         
     # Gửi đến Discord
-    if send_discord_embed(message):
+    if send_discord_embed(trending_list, message):
         print("Gửi thông báo đến Discord thành công!")
     else:
         print("Gửi thông báo thất bại.")
